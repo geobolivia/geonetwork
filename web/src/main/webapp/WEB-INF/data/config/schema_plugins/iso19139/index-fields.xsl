@@ -177,6 +177,16 @@
             	<Field name="responsiblePartyRole" string="{string(.)}" store="true" index="true"/>
             </xsl:for-each>
             
+      <!-- - - - - - - - - - - - - - - GEOBOLIVIA- - - - - - - - - - - - - - -->    
+  
+      <xsl:for-each select="gmd:descriptiveKeywords/gco:CharacterString">
+        <Field name="descriptiveKeywords" string="{string(.)}" store="true" index="true"/>
+      </xsl:for-each>
+      
+      <xsl:for-each select="gmd:purpose/gco:CharacterString">
+        <Field name="purpose" string="{string(.)}" store="true" index="true"/>
+      </xsl:for-each>
+
 			<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->		
 	
 			<xsl:for-each select="gmd:abstract/gco:CharacterString">

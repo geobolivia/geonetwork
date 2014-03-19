@@ -210,6 +210,8 @@ public class LuceneQueryBuilder {
         }
         query = buildORQuery(searchCriteriaOR, query, similarity);
         query = buildANDQuery(searchCriteria, query, similarity, processedRangeFields);
+        Query queryGeoBolivia = buildGeoBoliviaQuery(searchCriteria.get("any").iterator().next());// GEOBOLIVIA
+        //TODO Test with language
         if(StringUtils.isNotEmpty(_language)) {
             if(Log.isDebugEnabled(Geonet.LUCENE))
                 Log.debug(Geonet.LUCENE, "adding locale query for language " + _language);
@@ -218,8 +220,21 @@ public class LuceneQueryBuilder {
         else {
             if(Log.isDebugEnabled(Geonet.LUCENE))
                 Log.debug(Geonet.LUCENE, "no language set, not adding locale query");
-            return query;
+            return queryGeoBolivia;//GEOBOLIVIA: query;
         }
+    }
+
+    private Query buildGeoBoliviaQuery(String analyzedString) {
+        Query query = null;
+        SpanishAnalyzer analyzer = new SpanishAnalyzer(Geonet.LUCENE_VERSION); // GEOBOLIVA
+        try { // GEOBOLIVA
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(Geonet.LUCENE_VERSION, new String[] {"title", "abstract", "keyword", "purpose", "descriptiveKeywords"}, analyzer); // GEOBOLIVA
+            query = parser.parse(analyzedString); // GEOBOLIVA
+        } catch(ParseException e) { // GEOBOLIVA
+            e.printStackTrace(); // GEOBOLIVA
+        } // GEOBOLIVA
+
+        return query;
     }
 
     /**
