@@ -213,7 +213,11 @@ public class LuceneQueryBuilder {
         }
         query = buildORQuery(searchCriteriaOR, query, similarity);
         query = buildANDQuery(searchCriteria, query, similarity, processedRangeFields);
-        Query queryGeoBolivia = buildGeoBoliviaQuery(searchCriteria.get("any").iterator().next());// GEOBOLIVIA
+        Query queryGeoBolivia = null;
+
+        if(searchCriteria.get("any") != null) {
+            queryGeoBolivia = buildGeoBoliviaQuery(searchCriteria.get("any").iterator().next());// GEOBOLIVIA
+        }
         //TODO Test with language
         if(StringUtils.isNotEmpty(_language)) {
             if(Log.isDebugEnabled(Geonet.LUCENE))
@@ -223,8 +227,24 @@ public class LuceneQueryBuilder {
         else {
             if(Log.isDebugEnabled(Geonet.LUCENE))
                 Log.debug(Geonet.LUCENE, "no language set, not adding locale query");
-            return queryGeoBolivia;//GEOBOLIVIA: query;
+            String searchGeoBo = getTokenGeoBolivia(searchCriteria);
+            if(queryGeoBolivia!= null && searchGeoBo.equals("1")) {
+                return queryGeoBolivia;//GEOBOLIVIA: query;
+            }
+            else {
+                return query;
+            }
         }
+    }
+
+    private String getTokenGeoBolivia(Map<String, Set<String>> searchCriteria) {
+        String response = "";
+        Set<String> searchCriteriaSet = searchCriteria.get("geobolivia");
+        if(searchCriteriaSet != null) {
+            response = searchCriteriaSet.iterator().next();
+        }
+
+        return response;
     }
 
     private Query buildGeoBoliviaQuery(String analyzedString) {
